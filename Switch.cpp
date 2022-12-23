@@ -5,19 +5,28 @@ Switch::Switch() {
     onTime=0;
     toggleMode=true;
     changeState(false);
+    binary=true;
 
 }
 
 Switch::changeState(bool s) {
-    state=s;
+    value=s;
     gpio_set_level(pin,state);
     tLastChange=now;
     publish();
 }
 
-Switch::run() {
-    bool ns=input->state;
-    if(ns && !previnput) {
+Switch::run(float v) {
+    if(toggle) {
+        if(v && !lastReading) {
+            changeState(!value);
+            lastReading=v;
+        }
+    }
+    else {
+
+    }
+    if(v && !previnput) {
         changeState(ns);
     }
     if(state) {

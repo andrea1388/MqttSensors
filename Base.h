@@ -6,9 +6,10 @@ class Base {
         Mqtt *mqtt;
         char *mqttStateTopic;
 
-        void run();
+        virtual void run(float v)=0;
         bool state;
         float value;
-    private:
+    protected:
         void publish();
+        bool binary;
 }

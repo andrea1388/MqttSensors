@@ -7,6 +7,8 @@ class Switch:Base {
     BinarySensor *input;
     uint8_t onTime;
     bool toggleMode;
+    uint8_t tOn;
+    uint8_t tOff;
     gpio_num_t outputpin;
 }
 
