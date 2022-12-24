@@ -5,7 +5,9 @@ BinarySensor::BinarySensor() {
     debounceTime=50;
 }
 
-void BinarySensor:run() {
+void BinarySensor:run(float input) {
+    now=(esp_timer_get_time()/1000);
+    
     if(debouceTimeElapsed())
         processInput();
 }
@@ -20,7 +22,7 @@ void BinarySensor::processInput() {
 }
 
 inline bool BinarySensor::debouceTimeElapsed() {
-    now=(esp_timer_get_time()/1000);
+
     return((now-tLastReading)>debounceTime);
 }
 

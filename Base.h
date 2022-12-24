@@ -12,4 +12,7 @@ class Base {
     protected:
         void publish();
         bool binary;
+        uint8_t mqttUpdateInterval; // in seconds
+        float mqttMinUpdateOffset; 
+        
 }
