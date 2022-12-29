@@ -53,14 +53,14 @@ void Switch::run(bool input) {
 void Switch::newMqttMsg(char*topic,char*msg) {
     if(strcmp(topic,commandTopic))
         if(strcmp(msg,"ON")) {
-            if(toggleMode || tOn=0) {
+            if(toggleMode==true || tOn=0) {
                 if(gpio_get_level(outputpin)==0) changeState(true);
                 return;
             }
             if(!cycle) {cycle=true; changeState(true);}
         }
         if(strcmp(msg,"OFF")) {
-            if(toggleMode || tOn=0) {
+            if(toggleMode==true || tOn=0) {
                 if(gpio_get_level(outputpin)==1) changeState(false);
                 return;
             }

@@ -1,4 +1,4 @@
 idf_component_register(SRCS     
-"mqtt.cpp"                   
+Base.cpp BinarySensor.cpp Sensor.cpp Switch.cpp                   
 INCLUDE_DIRS .
-REQUIRES mqtt)
+REQUIRES mqtt driver Esp32MqttComponent)

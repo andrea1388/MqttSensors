@@ -18,5 +18,5 @@ class Switch:Base {
         void publish();
         int64_t tLastChange;
         bool cycle;
-}
+};
 

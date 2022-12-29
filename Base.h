@@ -1,5 +1,5 @@
 #include "driver/gpio.h"
-#include "Mqtt.h"
+#include <Mqtt.h>
 
 class Base {
     public:
@@ -13,4 +13,4 @@ class Base {
         uint8_t mqttUpdateInterval; // in seconds
         float mqttMinUpdateOffset; 
         
-}
+};

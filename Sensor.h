@@ -2,4 +2,4 @@
 class Sensor:Base {
     public:
         void run(float);
-}
+};
