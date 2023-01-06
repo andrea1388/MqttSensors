@@ -1,16 +1,17 @@
+# pragma once
 #include "driver/gpio.h"
 #include <Mqtt.h>
 
-class Base {
-    public:
-        Mqtt *mqtt;
-        char *mqttStateTopic;
-        bool state;
-        float value;
-    protected:
-        void publish(char*);
-        bool binary;
-        uint8_t mqttUpdateInterval; // in seconds
-        float mqttMinUpdateOffset; 
-        
-};
+namespace MqttSensors {
+    class Base {
+        public:
+            Mqtt *mqttClient;
+            char *mqttStateTopic;
+            float value;
+        protected:
+            void publish(char*msg);
+            uint8_t mqttUpdateInterval; // in seconds
+            float mqttMinUpdateOffset; 
+            
+    };
+}

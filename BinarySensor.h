@@ -1,7 +1,18 @@
+# pragma once
 #include "driver/gpio.h"
 #include "Base.h"
-class BinarySensor:Base {
-    uint8_t debounceTime;
-    int64_t tLastReading;
-    gpio_num_t inputpin;
-};
+namespace MqttSensors {
+    class BinarySensor:Base {
+        public:
+            BinarySensor(gpio_num_t pin);
+            uint8_t debounceTime;
+            void run();
+            bool state;
+            gpio_num_t pin;
+
+        private:
+            int64_t tLastReading;
+            void processInput();
+            bool debouceTimeElapsed();
+    };
+}

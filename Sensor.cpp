@@ -1,15 +1,21 @@
 #include "Sensor.h"
 
+using namespace MqttSensors;
+
 Sensor::Sensor()
 {
     value=0;
+    minIntervalBetweenMqttUpdate=1;
+    minVariationBetweenMqttUpdate=1;
 }
 
 void Sensor::run(float v)
 {
     if(value!=v) {
         value=v;
-        if(mqtt && now>tLastPublish+publishInterval)           Base:publish(msg);
+        if(true) {
+            publish();
+        }
     }        
 }
 void Sensor::publish() {
