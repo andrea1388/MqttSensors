@@ -10,5 +10,6 @@ namespace MqttSensors {
 
         private:
             void publish();
+            float lastValuePublished;
     };
 }

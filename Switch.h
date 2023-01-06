@@ -8,7 +8,6 @@ namespace MqttSensors {
     class Switch:Base {
         public:
             bool toggleMode;
-            bool state;
             uint32_t tOn; /*!< On time interval expressed in milliseconds */
             uint32_t tOff; /*!< Off time interval expressed in milliseconds */
             gpio_num_t pin;
