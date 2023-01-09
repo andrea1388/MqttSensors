@@ -2,7 +2,7 @@
 #include "driver/gpio.h"
 #include "Base.h"
 namespace MqttSensors {
-    class BinarySensor:Base {
+    class BinarySensor:public Base {
         public:
             BinarySensor(gpio_num_t pin);
             uint8_t debounceTime;

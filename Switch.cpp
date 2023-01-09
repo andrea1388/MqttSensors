@@ -2,75 +2,82 @@
 #include "Switch.h"
 #include "esp_timer.h"
 #include "string.h"
+#define LOG_LOCAL_LEVEL ESP_LOG_DEBUG
+#include "esp_log.h"
+static const char *TAG = "Switch";
 
 using namespace MqttSensors;
 
 Switch::Switch(gpio_num_t _pin) {
     pin=_pin;
     tOn=tOff=0;
-    toggleMode=true;
-    gpio_set_direction(pin, GPIO_MODE_OUTPUT);
+    on=off=false;
+    toggleMode=false;
+    ESP_ERROR_CHECK(gpio_set_direction(pin, GPIO_MODE_INPUT_OUTPUT));
     gpio_set_level(pin,0);
     tLastChange=0;
+    Base();
 }
 
 void Switch::changeState(bool s) {
-    gpio_set_level(pin,s);
+    if(s) gpio_set_level(pin,1); else gpio_set_level(pin,0); 
     tLastChange=esp_timer_get_time();
     char msg[4];
     if(s) strcpy(msg,"ON"); else strcpy(msg,"OFF");
     Base::publish(msg); 
 }
 
-void Switch::run(bool input) {
-    bool state=gpio_get_level(pin);
-    if(toggleMode) {
-        if(input != lastReading) {
-            changeState(!state);
-            lastReading=input;
+void Switch::run(bool inp) {
+    bool out=(gpio_get_level(pin)==1);
+    int64_t now=esp_timer_get_time();
+    static bool previnp=false;
+
+    uint8_t modo;
+    if(toggleMode) modo=1; else if(!tOn) modo=2; else modo=3;
+    ESP_LOGD(TAG,"modo: %u input: %d previnp: %d out: %d time: %lld lastchange: %lld\n", modo, inp,previnp,out,now,tLastChange);
+
+
+    if(!out) {
+        if(on) { on=false;changeState(true);return;}
+        switch (modo)
+        {
+        case 1:
+        case 2:
+            if(inp && !previnp) {changeState(true);break;}
+            break;
+        case 3:
+            if((inp && !previnp) || (inp && (now-tLastChange)>tOff*1000)) { changeState(true);break;}
+            break;
+        default:
+            assert(0);
+            break;
         }
-        return;
+    } 
+    else {
+        if(off) { off=false;changeState(false);return;}
+        switch (modo)
+        {
+        case 1:
+            if(inp && !previnp) { changeState(false);break;}
+            if(tOn && (now-tLastChange)>tOn*1000) { changeState(false);break;}
+            break;
+        case 2:
+        case 3:
+            if(!inp && previnp) { changeState(false);break;}
+            if(tOn && (now-tLastChange)>tOn*1000) { changeState(false);break;}
+            break;
+        
+        default:
+            assert(0);
+            break;
+        }
     }
-
-    if(tOn==0) {
-        if(input != gpio_get_level(pin)) changeState(input);            
-        return;
-    }
-
-    //cycle case
-    if(cycle) {
-        int64_t now=esp_timer_get_time();
-        if(gpio_get_level(pin)) {
-            if((now-tLastChange)>tOn*1000) changeState(false);
-        } else {
-            if((now-tLastChange)>tOff*1000) {
-                changeState(true);
-                cycle=false;
-            }
-        }   
-    } else {
-        if(input && !cycle) {cycle=true; changeState(true);} 
-    }
-
+    previnp=inp;
 }
 
 void Switch::newMqttMsg(char*topic, char*msg) {
-    if(!strcmp(topic,commandTopic)) return;
- 
-    if(strcmp(msg,"ON")) {
-        if(toggleMode==true || tOn==0) {
-            if(gpio_get_level(pin)==0) changeState(true);
-            return;
-        }
-        if(!cycle) {cycle=true; changeState(true);}
-    }
-    if(strcmp(msg,"OFF")) {
-        if(toggleMode==true || tOn==0) {
-            if(gpio_get_level(pin)==1) changeState(false);
-            return;
-        }
-        if(cycle) {cycle=false; changeState(false);}
-    
-    }
+    if(!strcmp(topic,commandTopic)) return; 
+    if(strcmp(msg,"ON")) on=true;
+    if(strcmp(msg,"OFF")) off=true;
 
 }

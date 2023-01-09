@@ -8,6 +8,7 @@ namespace MqttSensors {
             Mqtt *mqttClient;
             char *mqttStateTopic;
             float value;
+            Base();
         protected:
             void publish(char*msg);
             uint8_t mqttUpdateInterval; // in seconds

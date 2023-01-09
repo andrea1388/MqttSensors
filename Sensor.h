@@ -5,11 +5,12 @@ namespace MqttSensors {
         public:
             void run(float);
             Sensor();
-            uint8_t minIntervalBetweenMqttUpdate; /*!< interval expressed in minutes */
+            uint16_t minIntervalBetweenMqttUpdate; /*!< interval expressed in seconds */
             uint8_t minVariationBetweenMqttUpdate; 
 
         private:
             void publish();
             float lastValuePublished;
+            int64_t tLastPublish;
     };
 }

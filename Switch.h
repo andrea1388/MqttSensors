@@ -5,9 +5,9 @@
 #include "Base.h"
 
 namespace MqttSensors {
-    class Switch:Base {
+    class Switch:public Base {
         public:
-            bool toggleMode;
+            bool toggleMode,on,off;
             uint32_t tOn; /*!< On time interval expressed in milliseconds */
             uint32_t tOff; /*!< Off time interval expressed in milliseconds */
             gpio_num_t pin;
