@@ -13,6 +13,7 @@ Switch::Switch(gpio_num_t _pin) {
     tOn=tOff=0;
     on=off=false;
     toggleMode=false;
+    ESP_ERROR_CHECK(gpio_reset_pin(pin));
     ESP_ERROR_CHECK(gpio_set_direction(pin, GPIO_MODE_INPUT_OUTPUT));
     gpio_set_level(pin,0);
     tLastChange=0;
@@ -30,11 +31,11 @@ void Switch::changeState(bool s) {
 void Switch::run(bool inp) {
     bool out=(gpio_get_level(pin)==1);
     int64_t now=esp_timer_get_time();
-    static bool previnp=false;
+    
 
     uint8_t modo;
     if(toggleMode) modo=1; else if(!tOn) modo=2; else modo=3;
-    ESP_LOGD(TAG,"modo: %u input: %d previnp: %d out: %d time: %lld lastchange: %lld\n", modo, inp,previnp,out,now,tLastChange);
+    ESP_LOGD(TAG,"switch: %s, modo: %u input: %d previnp: %d out: %d time: %lld lastchange: %lld Ton:%ld Toff:%ld\n", mqttStateTopic, modo, inp,previnp,out,now/1000,tLastChange/1000,tOn,tOff);
 
 
     if(!out) {
@@ -79,5 +80,7 @@ void Switch::newMqttMsg(char*topic, char*msg) {
     if(!strcmp(topic,commandTopic)) return; 
     if(strcmp(msg,"ON")) on=true;
     if(strcmp(msg,"OFF")) off=true;
+    ESP_LOGD(TAG,"Switch::newMqttMsg: %s on: %d off: %d\n", msg, on, off);
+
 
 }

@@ -7,13 +7,24 @@ static const char *TAG = "BinarySensor";
 
 using namespace MqttSensors;
 
-BinarySensor::BinarySensor(gpio_num_t _pin)
+BinarySensor::BinarySensor(gpio_num_t _pin,gpio_pull_mode_t mode)
 {
     pin=_pin;
     debounceTime = 50;
+    ESP_ERROR_CHECK(gpio_reset_pin(pin));
     ESP_ERROR_CHECK(gpio_set_direction(pin, GPIO_MODE_INPUT));
+    ESP_ERROR_CHECK(gpio_set_pull_mode(pin,mode));
     Base();
     tLastReading=0;
+/*     gpio_config_t io_conf = {};
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    io_conf.mode = GPIO_MODE_INPUT;
+    //bit mask of the pins that you want to set,e.g.GPIO18/19
+    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
+    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = 1;
+    ESP_ERROR_CHECK(gpio_config(&io_conf));
+ */
 }
 
 void BinarySensor::run()
@@ -30,7 +41,6 @@ void BinarySensor::processInput()
 
     if (state != input)
     {
-        printf("input: %d state: %d\n", input, state);
         state = input;
         char msg[4];
         if (state)

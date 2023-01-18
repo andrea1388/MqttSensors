@@ -12,7 +12,7 @@ Base::Base() {
 }
 
 void Base::publish(char *msg) {
-    ESP_LOGI(TAG, "%s->%s\n",mqttStateTopic,msg);
+    ESP_LOGI(TAG, "%s->%s",mqttStateTopic,msg);
     if(!mqttStateTopic) {ESP_LOGE(TAG,"missing topic"); return;}
     if(!msg) {ESP_LOGE(TAG,"missing msg"); return;}
     if(!mqttClient) return;

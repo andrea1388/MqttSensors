@@ -21,5 +21,6 @@ namespace MqttSensors {
             void publish();
             int64_t tLastChange;
             bool cycle;
+            bool previnp=false;
     };
 }

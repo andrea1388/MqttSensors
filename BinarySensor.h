@@ -4,7 +4,7 @@
 namespace MqttSensors {
     class BinarySensor:public Base {
         public:
-            BinarySensor(gpio_num_t pin);
+            BinarySensor(gpio_num_t pin,gpio_pull_mode_t);
             uint8_t debounceTime;
             void run();
             bool state;

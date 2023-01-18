@@ -20,6 +20,7 @@ void Sensor::run(float v)
             publish();
         }
     }        
+    
 }
 void Sensor::publish() {
     char msg[6];
